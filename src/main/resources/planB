@@ -1,0 +1,81 @@
+package com.example.demo.controller;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/first")
+@Api(value = "first controller API", description = "REST controller for swagger tutorial")
+public class FirstController {
+
+    @ApiOperation(value = "Returns Hello World")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 100, message = "code 100"),
+                    @ApiResponse(code = 150, message = "code 150")
+            }
+    )
+    @GetMapping()
+    public String firstGet(){
+        return "i am a get method";
+    }
+
+    @ApiOperation("returns the request's body for http post request")
+    @PostMapping("/post")
+    public String firstPost(@RequestBody final String requestBody){
+        return "post method " + requestBody;
+    }
+
+    @ApiOperation("returns the request's body for http put request")
+    @PutMapping("/put")
+    public String firstPut(@RequestBody final String requestBody){
+        return "put method " + requestBody;
+    }
+}
+
+
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import static springfox.documentation.builders.PathSelectors.regex;
+
+@EnableSwagger2
+@Configuration
+public class SwaggerConfig {
+    @Bean
+    public Docket firstApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.example.demo"))
+                .paths(regex("/api/first.*"))
+                .build()
+                .apiInfo(metaInfo());
+    }
+
+    private ApiInfo metaInfo() {
+        ApiInfo apiInfo = new ApiInfo(
+                "spring boot swagger tuto",
+                "documenting RESTfull API",
+                "1",
+                "tn.insat.gl4",
+                new Contact("Bouhlel Ali", "www.gl4.com/alibouhlel",
+                        "alibouhlel@yahoo.com"),
+                "licence GL",
+                "insat.tn"
+        );
+
+        return apiInfo;
+    }
+}
